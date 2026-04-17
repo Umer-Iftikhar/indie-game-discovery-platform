@@ -1,9 +1,29 @@
+using IndieGamePlatform.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
+
+builder.Services.AddDbContext<IndieGamePlatform.Data.AppDbContext>
+(
+    options => options.UseMySql(connectionString, serverVersion)
+);
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    
+    .AddEntityFrameworkStores<IndieGamePlatform.Data.AppDbContext>();
+
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -11,6 +31,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
