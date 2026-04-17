@@ -5,7 +5,7 @@ CREATE TABLE AspNetUsers (
     -- Primary Key
     Id VARCHAR(255) PRIMARY KEY,
     
-    -- Your Custom Fields
+    -- Custom Fields
     GithubUserName VARCHAR(100) NULL,
     CreatedDate DATETIME(6) NOT NULL,
 
@@ -16,9 +16,9 @@ CREATE TABLE AspNetUsers (
     NormalizedEmail VARCHAR(256) NULL,
     PasswordHash LONGTEXT NULL,
     
-    -- The 'Hidden' Logic Fields
     -- SecurityStamp: Invalidates cookies/tokens when password changes
     SecurityStamp LONGTEXT NULL,
+
     -- ConcurrencyStamp: Prevents two admins from editing a user at the same time
     ConcurrencyStamp LONGTEXT NULL,
 
