@@ -1,3 +1,4 @@
+using IndieGamePlatform.Data;
 using IndieGamePlatform.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,8 @@ builder.Services.AddDbContext<IndieGamePlatform.Data.AppDbContext>
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     
-    .AddEntityFrameworkStores<IndieGamePlatform.Data.AppDbContext>();
+    .AddEntityFrameworkStores<IndieGamePlatform.Data.AppDbContext>()
+    .AddDefaultTokenProviders();
 
 
 var app = builder.Build();
@@ -28,6 +30,10 @@ var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    await DatabaseSeeder.SeedAsync(app.Services);
+}
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
