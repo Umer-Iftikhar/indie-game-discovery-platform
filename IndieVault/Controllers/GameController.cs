@@ -1,4 +1,5 @@
-﻿using IndieVault.Data;
+﻿using Bogus.DataSets;
+using IndieVault.Data;
 using IndieVault.Models;
 using IndieVault.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -84,7 +85,7 @@ namespace IndieVault.Controllers
                 GamePlatforms = model.SelectedPlatforms?.Select(p => new GamePlatform { PlatformId = Convert.ToInt32(p) }).ToList() ?? new List<GamePlatform>(),
                 GameTags = model.SelectedTags?.Select(t => new GameTag { TagId = Convert.ToInt32(t) }).ToList() ?? new List<GameTag>()
             };
-           
+
             // 2. Save Game to DB to generate game.Id
             await _context.Games.AddAsync(game);
             await _context.SaveChangesAsync();
@@ -192,7 +193,7 @@ namespace IndieVault.Controllers
             {
                 return NotFound();
             }
-            if(game.DeveloperId != currentUserId)
+            if (game.DeveloperId != currentUserId)
             {
                 return Forbid();
             }
@@ -348,6 +349,33 @@ namespace IndieVault.Controllers
             }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(MyGames), new { id = model.Id });
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            
+                var game = await _context.Games
+
+                    .Include(g => g.Developer)
+                    .Include(g => g.Genre)
+                    .Include(g => g.Engine)
+                    .Include(g => g.GamePlatforms)
+                        .ThenInclude(gp => gp.Platform)
+                    .Include(g => g.GameTags)
+                        .ThenInclude(gt => gt.Tag)
+                    .Include(g => g.Screenshots)
+                    .Include(g => g.Reviews)
+                        .ThenInclude(r => r.User)
+                    .FirstOrDefaultAsync(g => g.Id == id);
+
+            if (game == null)
+                {
+                    return NotFound();
+                }
+               
+                return View(game);
         }
     }
 }

@@ -119,7 +119,7 @@ namespace IndieVault.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("DownloadHistories");
+                    b.ToTable("DownloadHistories", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.Engine", b =>
@@ -140,7 +140,7 @@ namespace IndieVault.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Engines");
+                    b.ToTable("Engines", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.Game", b =>
@@ -201,7 +201,7 @@ namespace IndieVault.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("Games");
+                    b.ToTable("Games", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.GamePlatform", b =>
@@ -216,7 +216,7 @@ namespace IndieVault.Migrations
 
                     b.HasIndex("PlatformId");
 
-                    b.ToTable("GamePlatforms");
+                    b.ToTable("GamePlatforms", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.GameTag", b =>
@@ -231,7 +231,7 @@ namespace IndieVault.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("GameTags");
+                    b.ToTable("GameTags", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.Genre", b =>
@@ -252,7 +252,7 @@ namespace IndieVault.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.Platform", b =>
@@ -273,7 +273,7 @@ namespace IndieVault.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Platforms");
+                    b.ToTable("Platforms", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.Review", b =>
@@ -308,7 +308,7 @@ namespace IndieVault.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.Screenshot", b =>
@@ -331,7 +331,7 @@ namespace IndieVault.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Screenshots");
+                    b.ToTable("Screenshots", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.Tag", b =>
@@ -352,7 +352,7 @@ namespace IndieVault.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("IndieVault.Models.Wishlist", b =>
@@ -379,7 +379,7 @@ namespace IndieVault.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Wishlists");
+                    b.ToTable("Wishlists", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

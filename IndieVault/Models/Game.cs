@@ -61,5 +61,6 @@ namespace IndieVault.Models
         // Navigation for other related data
         public List<GameTag> GameTags { get; set; } = new();
         public List<Review> Reviews { get; set; } = new();
+        public List<Screenshot> Screenshots { get; set; } = new List<Screenshot>();
     }
 }

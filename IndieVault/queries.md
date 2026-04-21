@@ -48,3 +48,47 @@ LEFT JOIN GameTags gt ON g.Id = gt.GameId
 LEFT JOIN Tags t ON gt.TagId = t.Id
 WHERE g.DeveloperId = 'dev-uuid-123';
 ```
+
+fetching game with all related data
+```sql
+SELECT g.*, gr.Name AS Genre, e.Name AS Engine
+FROM Games g
+INNER JOIN Genres gr ON g.GenreId = gr.Id
+INNER JOIN Engines e ON g.EngineId = e.Id
+WHERE g.Id = 1;
+
+SELECT gp.PlatformId, p.Name 
+FROM GamePlatforms gp
+INNER JOIN Platforms p ON gp.PlatformId = p.Id
+WHERE gp.GameId = 1;
+
+SELECT gt.TagId, t.Name
+FROM GameTags gt
+INNER JOIN Tags t ON gt.TagId = t.Id
+WHERE gt.GameId = 1;
+
+SELECT Id, ImagePath FROM Screenshots WHERE GameId = 1;
+```
+
+updating game
+```sql
+UPDATE Games 
+SET Title = 'New Title',
+    Description = 'New desc',
+    Price = 19.99,
+    ReleaseDate = '2024-01-01',
+    GenreId = 2,
+    EngineId = 1,
+    DownloadLink = 'https://newlink.com',
+    CoverImagePath = '/images/games/1/cover.jpg'
+WHERE Id = 1 AND DeveloperId = 'user-guid-here';
+```
+
+deleting game
+```sql
+-- EF Core cascades these automatically based on model relationships
+DELETE FROM Screenshots WHERE GameId = 1;
+DELETE FROM GamePlatforms WHERE GameId = 1;
+DELETE FROM GameTags WHERE GameId = 1;
+DELETE FROM Games WHERE Id = 1 AND DeveloperId = 'user-guid-here';
+```
