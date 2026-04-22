@@ -1,8 +1,36 @@
-﻿@{
+﻿@using IndieVault.ViewModels
+@model GameBrowseViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>@ViewData["Title"]</h1>
+
+<table>
+    <tr>
+        <th>Cover Image</th>
+        <th>Title</th>
+        <th>Genre</th>
+        <th>Price</th>
+        <th>Developer</th>
+        <th>Release Date</th>
+        <th>Average Ratings</th>
+    </tr>
+    @foreach (var game in Model.Games)
+    {
+        <tr>
+          <td><img src="@game.CoverImagePath" alt="@game.Title" width="100" /></td>
+          <td>@game.Title</td>
+          <td>@game.GenreName</td>
+          <td>@game.Price</td>
+          <td>@game.Developer</td>
+          <td>@game.ReleaseDate.ToString("yyyy-MM-dd")</td>
+          <td>@game.AverageRatings</td>
+        </tr>
+    }
+</table>
+@for (int i = 1; i <= Model.TotalPages; i++)
+{
+    <a asp-action="Index" asp-route-pageNumber="@i">@i</a>
+}

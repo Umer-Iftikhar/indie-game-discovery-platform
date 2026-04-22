@@ -1,4 +1,6 @@
 using IndieVault.Models;
+using IndieVault.Services;
+using IndieVault.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,16 +8,25 @@ namespace IndieVault.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly GameBrowseService _gameBrowseService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(GameBrowseService gameBrowseService)
         {
-            _logger = logger;
+           _gameBrowseService = gameBrowseService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
         {
-            return View();
+            var (games, totalCount) = await _gameBrowseService.GetBrowseGamesAsync(pageNumber, pageSize);
+            var viewModel = new GameBrowseViewModel
+            {
+                Games = games,
+                CurrentPage = pageNumber,
+                TotalCount = totalCount,
+                TotalPages = (totalCount + pageSize - 1) / pageSize
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Privacy()
@@ -23,10 +34,6 @@ namespace IndieVault.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+       
     }
 }
