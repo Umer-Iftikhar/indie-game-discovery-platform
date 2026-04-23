@@ -48,6 +48,7 @@
                             <td>@(game.Price == 0 ? "Free" : $"${game.Price}")</td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
+                                    <a asp-controller="Game" asp-action="Details" asp-route-id="@game.Id" class="btn btn-sm btn-outline-info">View</a>
                                     <a asp-controller="Game" asp-action="Edit" asp-route-id="@game.Id" class="btn btn-sm btn-outline-warning">Edit</a>
 
                                     @* Delete Mini-Form *@

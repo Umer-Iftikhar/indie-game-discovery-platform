@@ -86,7 +86,7 @@
             {
                 <tr style="border-bottom: 1px solid #eee;">
                     <td><img src="@game.CoverImagePath" alt="@game.Title" width="80" style="border-radius: 4px;" /></td>
-                    <td><strong>@game.Title</strong></td>
+                    <td><strong><a asp-controller="Game" asp-action="Details" asp-route-id="@game.Id" class="text-decoration-none text-primary">@game.Title </a></strong></td>
                     <td>@game.GenreName</td>
                     <td>@(game.Price == 0 ? "Free" : $"${game.Price}")</td>
                     <td>@game.Developer</td>

@@ -32,6 +32,9 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Game" asp-action="MyGames">My Games</a>
+                            </li>
+                            <li class="nav-item">
                                 <span class="nav-link text-dark">Hello, @User.Identity.Name!</span>
                             </li>
                             <li class="nav-item">
