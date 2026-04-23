@@ -2,35 +2,131 @@
 @model GameBrowseViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Browse Indie Games";
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<table>
-    <tr>
-        <th>Cover Image</th>
-        <th>Title</th>
-        <th>Genre</th>
-        <th>Price</th>
-        <th>Developer</th>
-        <th>Release Date</th>
-        <th>Average Ratings</th>
-    </tr>
-    @foreach (var game in Model.Games)
-    {
-        <tr>
-          <td><img src="@game.CoverImagePath" alt="@game.Title" width="100" /></td>
-          <td>@game.Title</td>
-          <td>@game.GenreName</td>
-          <td>@game.Price</td>
-          <td>@game.Developer</td>
-          <td>@game.ReleaseDate.ToString("yyyy-MM-dd")</td>
-          <td>@game.AverageRatings</td>
-        </tr>
-    }
-</table>
-@for (int i = 1; i <= Model.TotalPages; i++)
+<hr />
+
+<form asp-controller="Home" asp-action="Index" method="get" class="filter-section" style="background: #f4f4f4; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        
+        <div>
+            <label>Search</label><br />
+            <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Game title..." />
+        </div>
+
+        <div>
+            <label>Genre</label><br />
+            <select name="genreId">
+                <option value="">All Genres</option>
+                @foreach (var genre in Model.Genres)
+                {
+                    <option value="@genre.Id" selected="@(genre.Id == Model.SelectedGenreId)">
+                        @genre.Name
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div>
+            <label>Price Range</label><br />
+            <input type="number" name="minPrice" value="@Model.MinPrice" placeholder="Min" style="width: 80px;" />
+            <input type="number" name="maxPrice" value="@Model.MaxPrice" placeholder="Max" style="width: 80px;" />
+        </div>
+
+        <div>
+            <label>Sort By</label><br />
+            <select name="sortBy">
+                <option value="Newest" selected="@(Model.SortBy == IndieVault.Enums.SortBy.Newest)">Newest</option>
+                <option value="Rating" selected="@(Model.SortBy == IndieVault.Enums.SortBy.Rating)">Highest Rated</option>
+                <option value="PriceAsc" selected="@(Model.SortBy == IndieVault.Enums.SortBy.PriceAsc)">Price: Low to High</option>
+                <option value="PriceDesc" selected="@(Model.SortBy == IndieVault.Enums.SortBy.PriceDesc)">Price: High to Low</option>
+            </select>
+        </div>
+    </div>
+
+    <div style="margin-top: 15px;">
+        <label><strong>Platforms:</strong></label><br />
+        @foreach (var platform in Model.Platforms)
+        {
+            <div style="display: inline-block; margin-right: 15px;">
+                <input type="checkbox" name="platformIds" value="@platform.Id"
+                @(Model.SelectedPlatformsId.Contains(platform.Id) ? "checked" : "") />
+                <span>@platform.Name</span>
+            </div>
+        }
+    </div>
+
+    <div style="margin-top: 15px;">
+        <button type="submit" style="padding: 8px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Apply Filters
+        </button>
+        <a asp-action="Index" style="margin-left: 10px; text-decoration: none; color: #666;">Clear All</a>
+    </div>
+</form>
+
+@if (Model.Games != null && Model.Games.Any())
 {
-    <a asp-action="Index" asp-route-pageNumber="@i">@i</a>
+    <table class="table table-hover align-middle" style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="text-align: left; border-bottom: 2px solid #ddd;">
+                <th>Cover</th>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Price</th>
+                <th>Developer</th>
+                <th>Release Date</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in Model.Games)
+            {
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td><img src="@game.CoverImagePath" alt="@game.Title" width="80" style="border-radius: 4px;" /></td>
+                    <td><strong>@game.Title</strong></td>
+                    <td>@game.GenreName</td>
+                    <td>@(game.Price == 0 ? "Free" : $"${game.Price}")</td>
+                    <td>@game.Developer</td>
+                    <td>@game.ReleaseDate.ToString("MMM dd, yyyy")</td>
+                    <td>
+                        <span class="badge rounded-pill bg-warning text-dark">
+                            <i class="bi bi-star-fill"></i> @game.AverageRatings.ToString("0.0")
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
+else
+{
+    <div class="text-center my-5 p-5" style="background: #fcfcfc; border: 2px dashed #ddd; border-radius: 8px;">
+        <i class="bi bi-search" style="font-size: 3rem; color: #ccc;"></i>
+        <h3 class="mt-3">No games found</h3>
+        <p class="text-muted">We couldn't find any games matching your current filters. Try adjusting your search or price range.</p>
+        <a asp-action="Index" class="btn btn-outline-secondary mt-2">Reset All Filters</a>
+    </div>
+}
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center mt-4">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" 
+                   href="@Url.Action("Index", new { 
+                        pageNumber = i, 
+                        searchTerm = Model.SearchTerm, 
+                        genreId = Model.SelectedGenreId, 
+                        platformIds = Model.SelectedPlatformsId,
+                        minPrice = Model.MinPrice, 
+                        maxPrice = Model.MaxPrice, 
+                        sortBy = Model.SortBy 
+                   })">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
