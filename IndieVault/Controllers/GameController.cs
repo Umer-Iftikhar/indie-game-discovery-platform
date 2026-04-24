@@ -71,7 +71,7 @@ namespace IndieVault.Controllers
                 return View(model);
             }
 
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             // 1. Create Game Object (without paths yet)
             var game = new Game
@@ -174,7 +174,7 @@ namespace IndieVault.Controllers
             var gameFolder = Path.Combine(_environment.WebRootPath, "images", "games", id.ToString());
             if (Directory.Exists(gameFolder))
             {
-                Directory.Delete(gameFolder, true); // true = recursive delete
+                Directory.Delete(gameFolder, true); 
             }
 
             _context.Games.Remove(game);
@@ -378,14 +378,19 @@ namespace IndieVault.Controllers
             }
             
             bool hasReviewed = false;
+            bool isWishlisted = false;
             bool isPlayer = User.IsInRole("Player");
-            if(User.Identity.IsAuthenticated && isPlayer)
+            if(User.Identity!.IsAuthenticated && isPlayer)
             {
                 var userId = _userManager.GetUserId(User);
+
                 hasReviewed = await _context.Reviews.AnyAsync(r => r.GameId == id && r.UserId == userId);
+
+                isWishlisted = await _context.Wishlists.AnyAsync(w => w.GameId == id && w.UserId == userId);
             }
 
             ViewBag.HasReviewed = hasReviewed;
+            ViewBag.IsWishlisted = isWishlisted;
             ViewBag.IsPlayer = isPlayer;
 
             return View(game);

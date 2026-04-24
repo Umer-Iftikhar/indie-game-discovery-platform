@@ -92,6 +92,20 @@
                                     <i class="bi bi-clock-history me-2"></i> Coming Soon
                                 </button>
                             }
+                            
+                            @* --- WISHLIST BUTTON START --- *@
+                            @if (User.Identity!.IsAuthenticated && ViewBag.IsPlayer == true)
+                            {
+                                <button id="wishlistBtn"
+                                        data-game-id="@Model.Id"
+                                        class="btn @(ViewBag.IsWishlisted ? "btn-danger" : "btn-outline-danger") btn-lg rounded-pill">
+                                    <i class="bi @(ViewBag.IsWishlisted ? "bi-heart-fill" : "bi-heart") me-2"></i>
+                                    <span id="wishlistText">@(ViewBag.IsWishlisted ? "In Wishlist" : "Add to Wishlist")</span>
+                                </button>
+                            }
+                            
+                            
+                            @* --- WISHLIST BUTTON END --- *@
                         </div>
                         <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-sm border-0">
                             <i class="bi bi-arrow-left me-1"></i> Back to Library

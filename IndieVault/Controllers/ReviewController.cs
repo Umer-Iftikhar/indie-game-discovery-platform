@@ -66,7 +66,7 @@ namespace IndieVault.Controllers
             await _context.Reviews.AddAsync(new Review
             {
                 GameId = viewModel.GameId,
-                UserId = _userManager.GetUserId(User),
+                UserId = _userManager.GetUserId(User)!,
                 Rating = viewModel.Rating,
                 Comment = viewModel.Comment,
                 ReviewDate = DateTime.UtcNow
@@ -81,16 +81,16 @@ namespace IndieVault.Controllers
         [ValidateAntiForgeryToken] 
         public async Task<IActionResult> Delete(int id)
         {
-            // 1. Fetch the review
+            // Fetch the review
             var review = await _context.Reviews.FindAsync(id);
 
-            // 2. Return NotFound if it doesn't exist
+            // Return NotFound if it doesn't exist
             if (review == null)
             {
                 return NotFound();
             }
 
-            // 3. Authorization Check
+            // Authorization Check
             var currentUserId = _userManager.GetUserId(User);
             bool isAdmin = User.IsInRole("Admin");
 
@@ -100,17 +100,17 @@ namespace IndieVault.Controllers
                 return Forbid();
             }
 
-            // 4. Capture GameId for the redirect before deleting
+            // Capture GameId for the redirect before deleting
             int gameId = review.GameId;
 
-            // 5. Delete and Save
+            // Delete and Save
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
 
-            // Optional: Let the user know it worked
+            // Let the user know it worked
             TempData["Message"] = "Review removed successfully.";
 
-            // 6. Redirect back to the Game Details page
+            // Redirect back to the Game Details page
             return RedirectToAction("Details", "Game", new { id = gameId });
         }
 
