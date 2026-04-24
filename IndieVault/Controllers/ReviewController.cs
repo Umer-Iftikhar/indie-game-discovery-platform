@@ -76,5 +76,43 @@ namespace IndieVault.Controllers
             return RedirectToAction("Details", "Game", new { id = viewModel.GameId });
         }
 
+        [HttpPost]
+        [Authorize] // Ensures only logged-in users can even hit this logic
+        [ValidateAntiForgeryToken] 
+        public async Task<IActionResult> Delete(int id)
+        {
+            // 1. Fetch the review
+            var review = await _context.Reviews.FindAsync(id);
+
+            // 2. Return NotFound if it doesn't exist
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            // 3. Authorization Check
+            var currentUserId = _userManager.GetUserId(User);
+            bool isAdmin = User.IsInRole("Admin");
+
+            // Only the owner of the review OR an Admin can proceed
+            if (review.UserId != currentUserId && !isAdmin)
+            {
+                return Forbid();
+            }
+
+            // 4. Capture GameId for the redirect before deleting
+            int gameId = review.GameId;
+
+            // 5. Delete and Save
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+
+            // Optional: Let the user know it worked
+            TempData["Message"] = "Review removed successfully.";
+
+            // 6. Redirect back to the Game Details page
+            return RedirectToAction("Details", "Game", new { id = gameId });
+        }
+
     }
 }
