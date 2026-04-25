@@ -98,6 +98,7 @@
                             {
                                 <button id="wishlistBtn"
                                         data-game-id="@Model.Id"
+                                        data-wishlisted="@ViewBag.IsWishlisted.ToString().ToLower()"
                                         class="btn @(ViewBag.IsWishlisted ? "btn-danger" : "btn-outline-danger") btn-lg rounded-pill">
                                     <i class="bi @(ViewBag.IsWishlisted ? "bi-heart-fill" : "bi-heart") me-2"></i>
                                     <span id="wishlistText">@(ViewBag.IsWishlisted ? "In Wishlist" : "Add to Wishlist")</span>
@@ -232,3 +233,57 @@
         }
     </div>
 </div>
+@Html.AntiForgeryToken()
+
+<script>
+    document.getElementById('wishlistBtn').addEventListener('click', async function(event)
+    {
+        try
+        {
+            // 1. Get both the ID and the current status separately
+            const btn = event.currentTarget;
+            const gameId = btn.dataset.gameId;
+            const isWishlisted = btn.dataset.wishlisted === 'true';
+
+            // 2. Get the antiforgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            // 3. Determine URL based on current state
+            const url = isWishlisted ? '/Wishlist/Remove' : '/Wishlist/Add';
+
+            // 4. Send fetch() POST to correct URL
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify({ gameId: gameId }),
+            });
+            // 5. Read JSON response
+            const result = await response.json();
+
+            // 6. Update button based on success/failure
+            if(response.ok && result.success)
+            {
+                btn.dataset.wishlisted = (!isWishlisted).toString();
+                btn.classList.toggle('btn-danger', !isWishlisted);
+                btn.classList.toggle('btn-outline-danger', isWishlisted);
+                btn.querySelector('i').classList.toggle('bi-heart-fill', !isWishlisted);
+                btn.querySelector('i').classList.toggle('bi-heart', isWishlisted);
+                btn.querySelector('#wishlistText').textContent = !isWishlisted ? 'In Wishlist' : 'Add to Wishlist';
+            }
+            else
+            {
+                alert(result.message || 'An error occurred while updating your wishlist. Please try again.');
+            }
+        }
+         catch(error) 
+         {
+            console.error('Error updating wishlist:', error);
+            alert('An unexpected error occurred. Please try again later.');
+         }
+
+    });
+</script>

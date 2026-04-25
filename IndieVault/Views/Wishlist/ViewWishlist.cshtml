@@ -1,0 +1,127 @@
+﻿@model IEnumerable<IndieVault.Models.Wishlist>
+
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Your wishlist is empty.</div>
+    }
+    else
+    {
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Cover</th>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Price</th>
+                    <th>Date Added</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.Game.CoverImagePath" alt="@item.Game.Title" style="width: 60px; height: 80px; object-fit: cover;" class="rounded" />
+                        </td>
+                        
+                        <td><strong><a asp-controller="Game" asp-action="Details" asp-route-id="@item.GameId" class="text-decoration-none text-primary">@item.Game.Title </a></strong></td>
+                        
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                <i class="bi bi-controller me-1"></i>
+                                @item.Game.Genre?.Name
+                            </span>
+                        </td>
+                        
+                        <td>
+                            <h4 class="text-success fw-bold mb-0">
+                                @(item.Game.Price == 0 ? "Free" : $"${item.Game.Price}")
+                            </h4>
+                        </td>
+                        
+                        <td>@item.CreatedDate.ToShortDateString()</td>
+                        
+                        <td>
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm remove-btn"
+                                    data-game-id="@item.GameId">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@Html.AntiForgeryToken()
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 1. Grab all the remove buttons
+        const removeButtons = document.querySelectorAll('.remove-btn');
+
+        removeButtons.forEach(btn => {
+            btn.addEventListener('click', async function () {
+                // Optional: Ask for confirmation so users don't accidentally delete
+                if (!confirm("Remove this game from your wishlist?")) return;
+
+                // Disable to prevent double-clicks
+                btn.disabled = true;
+
+                try {
+                    const gameId = btn.dataset.gameId;
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                    // 2. Send the request to the 'Remove' action
+                    const response = await fetch('/Wishlist/Remove', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify({ gameId: parseInt(gameId) })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        // 3. Find the table row (tr) and remove it
+                        // 'btn.closest' looks up the HTML tree to find the parent row
+                        const row = btn.closest('tr');
+                    
+                        // Add a small fade-out effect using Bootstrap/CSS (Optional)
+                        row.style.opacity = '0';
+                        row.style.transition = 'opacity 0.3s ease';
+                    
+                        setTimeout(() => {
+                            row.remove();
+                        
+                            // 4. Check if the table is now empty to show a "Empty" message
+                            const remainingRows = document.querySelectorAll('tbody tr');
+                            if (remainingRows.length === 0) {
+                                location.reload(); // Refresh to show the "Your wishlist is empty" alert
+                            }
+                        }, 300);
+
+                    } else {
+                        alert(result.message || "Failed to remove item.");
+                        btn.disabled = false;
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    btn.disabled = false;
+                }
+            });
+        });
+    });
+</script>

@@ -1,4 +1,5 @@
 ﻿using IndieVault.Data;
+using IndieVault.DTOs;
 using IndieVault.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,10 +21,10 @@ namespace IndieVault.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(int id)
+        public async Task<IActionResult> Add([FromBody] WishlistRequestDto dto)
         {
             var userId = _userManager.GetUserId(User)!;
-            var existingEntry = await _context.Wishlists.AnyAsync(w => w.GameId == id && w.UserId == userId);
+            var existingEntry = await _context.Wishlists.AnyAsync(w => w.GameId == dto.GameId && w.UserId == userId);
 
             if (existingEntry)
             {
@@ -31,7 +32,7 @@ namespace IndieVault.Controllers
             }
             var wishlistEntry = new Wishlist
             {
-                GameId = id,
+                GameId = dto.GameId,
                 UserId = userId
             };
 
@@ -42,10 +43,10 @@ namespace IndieVault.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Remove(int id)
+        public async Task<IActionResult> Remove([FromBody] WishlistRequestDto dto)
         {
             var userId = _userManager.GetUserId(User)!;
-            var wishlistEntry = await _context.Wishlists.FirstOrDefaultAsync(w => w.GameId == id && w.UserId == userId);
+            var wishlistEntry = await _context.Wishlists.FirstOrDefaultAsync(w => w.GameId == dto.GameId && w.UserId == userId);
 
             if (wishlistEntry == null)
             {
@@ -65,6 +66,7 @@ namespace IndieVault.Controllers
             var wishlistGames = await _context.Wishlists
                 .Where(w => w.UserId == userId)
                 .Include(w => w.Game)
+                    .ThenInclude(g => g.Genre)
                 .ToListAsync();
 
             return View(wishlistGames);
