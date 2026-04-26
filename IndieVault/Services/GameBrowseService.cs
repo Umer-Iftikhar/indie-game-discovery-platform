@@ -62,7 +62,7 @@ namespace IndieVault.Services
                     g.Title ASC
                 LIMIT @PageSize OFFSET @Offset;
 
-                -- 2. Get the Count
+                -- 2. Get the Count 
                 SELECT COUNT(DISTINCT g.Id) 
                 FROM games g 
                 WHERE (@GenreId IS NULL OR g.GenreId = @GenreId)
