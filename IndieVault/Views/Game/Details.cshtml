@@ -82,12 +82,11 @@
                             @if (!string.IsNullOrEmpty(Model.DownloadLink))
                             {
                                 @* This is now an actual link (<a>) styled to look like your button *@
-                                <a href="@Model.DownloadLink"
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   class="btn btn-primary btn-lg rounded-pill">
+                            <form asp-controller="Download" asp-action="Download" asp-route-id="@Model.Id" method="post">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100">
                                     <i class="bi bi-download me-2"></i> Get Game
-                                </a>
+                                </button>
+                            </form>
                             }
                             else
                             {

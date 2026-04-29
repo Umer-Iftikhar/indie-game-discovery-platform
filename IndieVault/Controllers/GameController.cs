@@ -174,7 +174,7 @@ namespace IndieVault.Controllers
             var gameFolder = Path.Combine(_environment.WebRootPath, "images", "games", id.ToString());
             if (Directory.Exists(gameFolder))
             {
-                Directory.Delete(gameFolder, true); 
+                Directory.Delete(gameFolder, true);
             }
 
             _context.Games.Remove(game);
@@ -283,7 +283,7 @@ namespace IndieVault.Controllers
                 }
             }
             // Update tags
-            game.GameTags.Clear(); 
+            game.GameTags.Clear();
             if (model.SelectedTags != null)
             {
                 foreach (var t in model.SelectedTags)
@@ -358,7 +358,7 @@ namespace IndieVault.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            
+
             var game = await _context.Games
                 .Include(g => g.Developer)
                 .Include(g => g.Genre)
@@ -376,11 +376,11 @@ namespace IndieVault.Controllers
             {
                 return NotFound();
             }
-            
+
             bool hasReviewed = false;
             bool isWishlisted = false;
             bool isPlayer = User.IsInRole("Player");
-            if(User.Identity!.IsAuthenticated && isPlayer)
+            if (User.Identity!.IsAuthenticated && isPlayer)
             {
                 var userId = _userManager.GetUserId(User);
 
