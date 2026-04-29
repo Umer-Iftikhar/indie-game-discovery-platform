@@ -3,11 +3,17 @@ using IndieVault.Models;
 using IndieVault.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<GameBrowseService>();
+builder.Services.AddHttpClient<IGitHubService, GitHubService>(httpClient =>
+{
+    httpClient.BaseAddress = new Uri("https://api.github.com/");
+    httpClient.DefaultRequestHeaders.Add("User-Agent", "IndieVault");
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
