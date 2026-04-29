@@ -1,0 +1,84 @@
+﻿@model IndieVault.ViewModels.DevProfileViewModel
+@{
+    ViewData["Title"] = "Developer Profile";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        @* User Basic Info Card *@
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="card-title">@Model.Name</h2>
+                    <p class="text-muted">@Model.Email</p>
+                    <hr />
+                    <div class="d-flex justify-content-around">
+                        <div>
+                            <h6>Joined</h6>
+                            <p>@Model.JoinDate.ToString("MMM yyyy")</p>
+                        </div>
+                        <div>
+                            <h6>Games</h6>
+                            <p class="badge bg-primary fs-6">@Model.TotalGames</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* GitHub Section *@
+        <div class="col-md-8">
+            @if (Model.GitHubProfile != null)
+            {
+                <div class="card shadow-sm border-dark">
+                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">GitHub Integration</h4>
+                        <a href="@Model.GitHubProfile.ProfileUrl" target="_blank" class="btn btn-outline-light btn-sm">
+                            View on GitHub
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            @* Public Repos *@
+                            <div class="col-sm-6 border-end">
+                                <h6 class="text-muted">Public Repos</h6>
+                                <p class="h4">@Model.GitHubProfile.PublicRepos</p>
+                            </div>
+                            @* Total Stars *@
+                            <div class="col-sm-6">
+                                <h6 class="text-muted">Total Stars</h6>
+                                <p class="h4 text-warning">
+                                    <i class="bi bi-star-fill"></i> @Model.GitHubProfile.TotalStars
+                                </p>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <h6>Top Languages</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @if (Model.GitHubProfile?.TopLanguages != null && Model.GitHubProfile.TopLanguages.Any())
+                            {
+                                @foreach (var lang in Model.GitHubProfile.TopLanguages)
+                                {
+                                    <span class="badge bg-info text-dark">@lang</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted italic">No languages detected.</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary border-dashed">
+                    <h5 class="alert-heading">GitHub Not Linked</h5>
+                    <p class="mb-0">This developer hasn't connected their GitHub account to IndieVault yet.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using IndieVault.ViewModels;    
-using Microsoft.AspNetCore.Identity;
+﻿using IndieVault.Data;
+using IndieVault.DTOs;
 using IndieVault.Models;
+using IndieVault.Services;
+using IndieVault.ViewModels;    
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace IndieVault.Controllers
 {
@@ -10,11 +14,15 @@ namespace IndieVault.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        private readonly AppDbContext _context;
+        private readonly IGitHubService _gitHubService;
+
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,AppDbContext context, IGitHubService gitHubService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
+            _gitHubService = gitHubService;
         }
         [HttpGet]
         public async Task<IActionResult> RegisterPlayer()
@@ -33,10 +41,10 @@ namespace IndieVault.Controllers
             {
                 return View(model);
             }
-            
-            var user = new ApplicationUser { UserName = model.UserName, Email = model.Email};
+
+            var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "Player");
                 await _signInManager.SignInAsync(user, isPersistent: false);
@@ -68,10 +76,10 @@ namespace IndieVault.Controllers
             {
                 return View(model);
             }
-          
-            var user = new ApplicationUser { UserName = model.UserName, Email = model.Email};
+
+            var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "GameDev");
                 await _signInManager.SignInAsync(user, isPersistent: false);
@@ -104,14 +112,14 @@ namespace IndieVault.Controllers
             {
                 return View(model);
             }
-           
+
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                 return View(model);
             }
-            var result = await _signInManager.PasswordSignInAsync(user.UserName!, model.Password, isPersistent: false , lockoutOnFailure: true);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName!, model.Password, isPersistent: false, lockoutOnFailure: true);
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");
@@ -135,6 +143,40 @@ namespace IndieVault.Controllers
         public IActionResult AccessDenied()
         {
             return View();
-        } 
+        }
+
+        // Methods for Dev's Profile
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            GitHubProfileDto? git = null;
+            if (user.GithubUserName != null)
+            {
+                git = await _gitHubService.GetProfileAsync(user.GithubUserName);
+            }
+
+            var totalGames = await _context.Games.CountAsync(g => g.DeveloperId == userId);
+
+            var model = new DevProfileViewModel
+            {
+                TotalGames = totalGames,
+                Email = user.Email,
+                Name = user.UserName,
+                JoinDate = user.CreatedDate,
+                GitHubProfile = git
+            };
+            return View(model);
+        }
+
+
+
     }
 }
