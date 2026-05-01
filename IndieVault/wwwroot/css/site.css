@@ -1,36 +1,150 @@
+/* --- Base Typography & Responsiveness --- */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
     margin-bottom: 60px;
     background-color: #080b2e;
+    color: #e0e0e0;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
-
+/* --- Navigation & Layout --- */
 .navbar {
     background-color: #020424 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- Global Form Styling --- */
+.form-control, .form-select {
+    background-color: #0d113d;
+    border: 1px solid #1e255e;
+    color: #e0e0e0;
+}
+
+    .form-control:focus, .form-select:focus {
+        background-color: #12184d;
+        color: #fff;
+        border-color: #3b4cff;
+        box-shadow: 0 0 0 0.25rem rgba(59, 76, 255, 0.25);
+        outline: none;
+    }
+
+/* Fix for Floating Labels in Dark Mode */
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* --- Tables & Lists --- */
+.table {
+    color: #e0e0e0;
+}
+
+    .table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+        .table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+/* --- Pagination --- */
+.page-item.active .page-link {
+    background-color: #3b4cff;
+    border-color: #3b4cff;
+}
+
+.page-link {
+    background-color: #0d113d;
+    border-color: #1e255e;
+    color: #b0b8ff;
+}
+
+/* --- Carousel Navigation --- */
+
+.iv-nav-zone {
+    width: 15%;
+    height: 100%;
+    min-height: 400px; /* Ensures it doesn't collapse */
+    background: transparent !important;
+    border: none;
+    opacity: 1 !important;
+    z-index: 10; /* High enough to be clickable */
+    position: absolute; /* Positioned relative to the carousel-inner */
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    /* The Shadow Element */
+    .iv-nav-zone::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        opacity: 0;
+        transform: scaleX(0);
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        z-index: -1; /* Keeps shadow BEHIND the arrow */
+        pointer-events: none; /* Mouse passes through shadow to the button */
+    }
+
+/* Left Side Logic */
+.carousel-control-prev.iv-nav-zone::before {
+    background: linear-gradient(to right, rgba(0, 2, 18, 0.98), transparent);
+    transform-origin: left;
+}
+
+/* Right Side Logic */
+.carousel-control-next.iv-nav-zone::before {
+    background: linear-gradient(to left, rgba(0, 2, 18, 0.98), transparent);
+    transform-origin: right;
+}
+
+/* Active States */
+.iv-active-left::before,
+.iv-active-right::before {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+/* The Arrow Icon */
+.iv-arrow {
+    opacity: 0 !important;
+    width: 3rem;
+    height: 3rem;
+    transition: opacity 0.4s ease 0.25s;
+    z-index: 11; /* Always on top of the shadow */
+    pointer-events: none;
+}
+
+.iv-nav-zone.iv-active-left .iv-arrow,
+.iv-nav-zone.iv-active-right .iv-arrow {
+    opacity: 1 !important;
+}
+
+[data-bs-theme=dark] .carousel .carousel-indicators [data-bs-target] {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-bs-theme=dark] .carousel .carousel-indicators .active {
+    background-color: #ffffff !important;
 }

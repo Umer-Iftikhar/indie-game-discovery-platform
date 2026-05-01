@@ -42,16 +42,17 @@
                     </div>
                 }
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon p-3 bg-dark rounded-circle" aria-hidden="true"></span>
+            <button class="carousel-control-prev iv-nav-zone" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon iv-arrow" aria-hidden="true"></span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon p-3 bg-dark rounded-circle" aria-hidden="true"></span>
+
+            <button class="carousel-control-next iv-nav-zone" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon iv-arrow" aria-hidden="true"></span>
             </button>
         </div>
     }
 
-    @* --- Modernized Filter Section --- *@
+    @* --- Filter Section --- *@
     <form asp-controller="Home" asp-action="Index" method="get" class="filter-section shadow-sm border-0" style="background: #ffffff; padding: 25px; border-radius: 12px; margin-bottom: 40px; border: 1px solid #eee !important;">
         <div class="row g-3">
             <div class="col-md-3">
@@ -110,7 +111,7 @@
         </div>
     </form>
 
-    @* --- Polished Results Table --- *@
+    @* --- Results Table --- *@
     @if (Model.Games != null && Model.Games.Any())
     {
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
@@ -183,10 +184,3 @@
     </nav>
 </div>
 
-<style>
-    .page-item.active .page-link { background-color: #0d6efd; }
-    .table tbody tr { transition: background 0.2s; }
-    .table tbody tr:hover { background-color: rgba(13, 110, 253, 0.03); }
-    .carousel-caption { bottom: 3rem; }
-    .form-control:focus, .form-select:focus { box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1); border-color: #0d6efd; }
-</style>
