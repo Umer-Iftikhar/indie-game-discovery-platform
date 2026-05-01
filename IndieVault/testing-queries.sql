@@ -96,3 +96,15 @@ LEFT JOIN gametags gt ON t.Id = gt.TagId
 GROUP BY t.Name;
 
 SHOW CREATE TABLE Genres;
+
+SELECT UserName, GithubUserName FROM AspNetUsers;
+
+SELECT u.UserName, u.GithubUserName, r.Name 
+FROM AspNetUsers u
+JOIN AspNetUserRoles ur ON u.Id = ur.UserId
+JOIN AspNetRoles r ON ur.RoleId = r.Id
+WHERE r.Name = 'GameDev';
+
+UPDATE AspNetUsers 
+SET GithubUserName = 'Umer-Iftikhar' 
+WHERE UserName = 'Tester';
