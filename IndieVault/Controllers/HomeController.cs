@@ -21,7 +21,7 @@ namespace IndieVault.Controllers
            _context = context;
         }
 
-        public async Task<IActionResult> Index(string? searchTerm, decimal? minPrice, decimal? maxPrice, int? genreId,List<int>? platformIds, SortBy sortBy = SortBy.Newest, int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(string? searchTerm, decimal? minPrice, decimal? maxPrice, int? genreId,List<int>? platformIds, SortBy sortBy = SortBy.Newest, int pageNumber = 1, int pageSize = 12)
         {
             var (games, totalCount) = await _gameBrowseService.GetBrowseGamesAsync(pageNumber, pageSize, searchTerm, minPrice, maxPrice, genreId, platformIds, sortBy);
             var genres = await _context.Genres.ToListAsync();
