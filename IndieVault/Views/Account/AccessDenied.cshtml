@@ -2,41 +2,43 @@
     ViewData["Title"] = "Access Denied";
 }
 
-<div class="col-md-6 text-center">
-    <div class="mb-4">
-        <i class="bi bi-shield-lock-fill text-danger" style="font-size: 6rem;"></i>
-    </div>
-    
-    <h1 class="display-4 fw-bold">403</h1>
-    <h2 class="mb-3">Restricted Access</h2>
-    
-    @if (User.Identity?.IsAuthenticated == true)
-    {
-        <p class="lead text-muted mb-4">
-            Hello <strong>@User.Identity.Name</strong>, you are currently signed in,
-            but you do not have the <strong>Permissions</strong> required to access this section.
-        </p>
-        
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4">
-                <i class="bi bi-house-door"></i> Return Home
-            </a>
-
-            <form asp-controller="Account" asp-action="Logout" method="post">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-outline-danger px-4">
-                    <i class="bi bi-box-arrow-right"></i> Logout & Switch Account
-                </button>
-            </form>
+<main class="auth-container">
+    <section class="auth-card text-center">
+        <div class="icon-wrapper">
+            <i class="bi bi-shield-lock-fill text-danger"></i>
         </div>
-    }
-    else
-    {
-        <p class="lead text-muted mb-4">
-            You need to be logged in to view this page.
-        </p>
-        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg px-5">
-            Login
-        </a>
-    }
-</div>
+        
+        <h1 class="error-code">403</h1>
+        <h2 class="auth-title">Restricted Access</h2>
+        
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <p class="field-help">
+                Hello <strong>@User.Identity.Name</strong>, you are signed in,
+                but you do not have the <strong>Permissions</strong> required to access this section.
+            </p>
+            
+            <div class="button-group">
+                <a asp-controller="Home" asp-action="Index" class="primary-button">
+                    <i class="bi bi-house-door"></i> Return Home
+                </a>
+
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="outline-button-danger">
+                        <i class="bi bi-box-arrow-right"></i> Logout & Switch Account
+                    </button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <p class="field-help">
+                You need to be logged in to view this page.
+            </p>
+            <a asp-area="Identity" asp-page="/Account/Login" class="primary-button">
+                Login
+            </a>
+        }
+    </section>
+</main>

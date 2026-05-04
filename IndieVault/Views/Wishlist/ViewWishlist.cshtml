@@ -4,85 +4,67 @@
     ViewData["Title"] = "My Wishlist";
 }
 
-<div class="container mt-4">
-    <h1>@ViewData["Title"]</h1>
+<main class="wishlist-container">
+    <h1 class="page-title">@ViewData["Title"]</h1>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">Your wishlist is empty.</div>
+        <div class="empty-state-alert">
+            <i class="bi bi-heartbreak"></i>
+            <p>Your wishlist is empty.</p>
+        </div>
     }
     else
     {
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>Cover</th>
-                    <th>Title</th>
-                    <th>Genre</th>
-                    <th>Price</th>
-                    <th>Date Added</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            <img src="@item.Game.CoverImagePath" alt="@item.Game.Title" style="width: 60px; height: 80px; object-fit: cover;" class="rounded" />
-                        </td>
-                        
-                        <td><strong><a asp-controller="Game" asp-action="Details" asp-route-id="@item.GameId" class="text-decoration-none text-primary">@item.Game.Title </a></strong></td>
-                        
-                        <td>
-                            <span class="badge bg-light text-dark border">
-                                <i class="bi bi-controller me-1"></i>
-                                @item.Game.Genre?.Name
-                            </span>
-                        </td>
-                        
-                        <td>
-                            <h4 class="text-success fw-bold mb-0">
-                                @(item.Game.Price == 0 ? "Free" : $"${item.Game.Price}")
-                            </h4>
-                        </td>
-                        
-                        <td>@item.CreatedDate.ToShortDateString()</td>
-                        
-                        <td>
-                            <button type="button"
-                                    class="btn btn-outline-danger btn-sm remove-btn"
-                                    data-game-id="@item.GameId">
-                                <i class="bi bi-trash"></i> Remove
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <section class="wishlist-list">
+            @foreach (var item in Model)
+            {
+                <div class="wishlist-item" data-row-id="@item.GameId">
+                    <div class="item-cover">
+                        <img src="@item.Game.CoverImagePath" alt="@item.Game.Title" />
+                    </div>
+                    
+                    <div class="item-details">
+                        <h3 class="item-title">
+                            <a asp-controller="Game" asp-action="Details" asp-route-id="@item.GameId">@item.Game.Title</a>
+                        </h3>
+                        <span class="item-genre">
+                            <i class="bi bi-controller"></i> @item.Game.Genre?.Name
+                        </span>
+                        <p class="item-date">Added on @item.CreatedDate.ToShortDateString()</p>
+                    </div>
+                    
+                    <div class="item-price">
+                        <span class="price-tag">@(item.Game.Price == 0 ? "Free" : $"${item.Game.Price}")</span>
+                    </div>
+                    
+                    <div class="item-actions">
+                        <button type="button" class="remove-btn-icon" data-game-id="@item.GameId" title="Remove">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            }
+        </section>
     }
-</div>
+</main>
 
 @Html.AntiForgeryToken()
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // 1. Grab all the remove buttons
-        const removeButtons = document.querySelectorAll('.remove-btn');
+        const removeButtons = document.querySelectorAll('.remove-btn-icon');
 
         removeButtons.forEach(btn => {
             btn.addEventListener('click', async function () {
-                // Optional: Ask for confirmation so users don't accidentally delete
                 if (!confirm("Remove this game from your wishlist?")) return;
 
-                // Disable to prevent double-clicks
                 btn.disabled = true;
 
                 try {
                     const gameId = btn.dataset.gameId;
                     const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-                    // 2. Send the request to the 'Remove' action
                     const response = await fetch('/Wishlist/Remove', {
                         method: 'POST',
                         headers: {
@@ -95,21 +77,16 @@
                     const result = await response.json();
 
                     if (response.ok && result.success) {
-                        // 3. Find the table row (tr) and remove it
-                        // 'btn.closest' looks up the HTML tree to find the parent row
-                        const row = btn.closest('tr');
-                    
-                        // Add a small fade-out effect using Bootstrap/CSS (Optional)
-                        row.style.opacity = '0';
-                        row.style.transition = 'opacity 0.3s ease';
+                        const item = btn.closest('.wishlist-item');
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateX(20px)';
+                        item.style.transition = 'all 0.3s ease';
                     
                         setTimeout(() => {
-                            row.remove();
-                        
-                            // 4. Check if the table is now empty to show a "Empty" message
-                            const remainingRows = document.querySelectorAll('tbody tr');
-                            if (remainingRows.length === 0) {
-                                location.reload(); // Refresh to show the "Your wishlist is empty" alert
+                            item.remove();
+                            const remainingItems = document.querySelectorAll('.wishlist-item');
+                            if (remainingItems.length === 0) {
+                                location.reload();
                             }
                         }, 300);
 

@@ -4,82 +4,52 @@
     ViewData["Title"] = "My Downloads";
 }
 
-<style>
-    .history-card {
-        max-width: 900px;
-        margin: 30px auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .history-title {
-        border-bottom: 2px solid #333;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-    }
-
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .data-table th {
-        text-align: left;
-        padding: 12px;
-        background-color: #f4f4f4;
-        border-bottom: 2px solid #ccc;
-    }
-
-    .data-table td {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .data-table tr:hover {
-        background-color: #fafafa;
-    }
-
-    .no-data {
-        text-align: center;
-        padding: 40px;
-        color: #666;
-        font-style: italic;
-    }
-</style>
-
-<div class="history-card">
-    <h2 class="history-title">Download History</h2>
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+        <h2 class="dashboard-title">@ViewData["Title"]</h2>
+    </div>
 
     @if (Model != null && Model.Any())
     {
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Game Name</th>
-                    <th>Downloaded At</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+        <div class="table-responsive">
+            <table class="dashboard-table">
+                <thead>
                     <tr>
-                        <td>
-                            <a asp-controller="Game" asp-action="Details" asp-route-id="@item.GameId" class="game-link">
-                                <strong>@item.GameName</strong>
-                            </a>
-                        </td>
-                        <td>@item.DownloadTime.ToString("dd MMM yyyy HH:mm")</td>
+                        <th>Game Name</th>
+                        <th>Downloaded At</th>
+                        <th class="text-center">Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">
+                                <a asp-controller="Game" asp-action="Details" asp-route-id="@item.GameId" class="text-white text-decoration-none hover-blue">
+                                    @item.GameName
+                                </a>
+                            </td>
+                            <td class="text-muted">@item.DownloadTime.ToString("dd MMM yyyy HH:mm")</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a asp-controller="Game" asp-action="Details" asp-route-id="@item.GameId" class="action-link info" title="View Game">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
-        <div class="no-data">
-            <p>No download history found for your account.</p>
+        <div class="empty-state-card">
+            <i class="bi bi-cloud-download text-muted display-4"></i>
+            <h4 class="text-white mt-3">No history found</h4>
+            <p class="text-muted">You haven't downloaded any games yet.</p>
+            <a asp-controller="Home" asp-action="Index" class="primary-button mt-2">Browse Games</a>
         </div>
     }
 </div>

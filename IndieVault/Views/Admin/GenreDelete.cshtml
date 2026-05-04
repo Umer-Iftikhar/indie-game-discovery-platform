@@ -4,43 +4,48 @@
     ViewData["Title"] = "Delete Genre";
 }
 
-<div class="container mt-4">
+<div class="dashboard-wrapper">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card border-danger shadow-sm">
-                <div class="card-header bg-danger text-white">
-                    <h3 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Deletion</h3>
+            @* The panel replaces the card for a more professional, integrated look *@
+            <div class="admin-panel border-danger border-opacity-25">
+                <div class="admin-panel-header bg-danger bg-opacity-10">
+                    <h5 class="text-danger mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Deletion
+                    </h5>
                 </div>
-                <div class="card-body">
+                <div class="admin-panel-body p-4">
                     
-                    @* Display error message if the genre is linked to games *@
+                    @* Error Alert - styled to match your dark theme *@
                     @if (!string.IsNullOrEmpty(Model.Message))
                     {
-                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <div class="alert-dark-danger mb-4">
                             <i class="bi bi-slash-circle-fill me-2"></i>
-                            <div>@Model.Message</div>
+                            <span>@Model.Message</span>
                         </div>
                     }
 
-                    <p class="lead">Are you sure you want to delete the genre: <strong>@Model.GenreName</strong>?</p>
+                    <p class="text-white fs-5">
+                        Are you sure you want to delete the genre: <strong class="text-danger">@Model.GenreName</strong>?
+                    </p>
                     
-                    <div class="alert alert-warning small">
+                    <div class="info-note mb-4">
                         <i class="bi bi-info-circle me-1"></i> This action cannot be undone.
                     </div>
 
-                    <form asp-action="GenreDelete" method="post">
-                        @* Crucial: Hidden input for ID so the Post method knows which one to delete *@
+                    <form asp-controller="Admin" asp-action="GenreDelete" method="post">
                         <input type="hidden" asp-for="GenreId" />
                         <input type="hidden" asp-for="GenreName" />
 
-                        <div class="d-flex justify-content-between mt-4">
-                            <a asp-action="Dashboard" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> Cancel
+                        <div class="d-flex justify-content-between align-items-center mt-5">
+                            <a asp-action="Dashboard" class="text-muted text-decoration-none hover-white">
+                                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
                             </a>
                             
-                            @* Disable button if there is a blocking message *@
-                            <button type="submit" class="btn btn-danger" @(string.IsNullOrEmpty(Model.Message) ? "" : "disabled")>
-                                <i class="bi bi-trash"></i> Permanently Delete
+                            <button type="submit"
+                                    class="primary-button bg-danger border-danger @(string.IsNullOrEmpty(Model.Message) ? "" : "disabled-btn")"
+                                @(string.IsNullOrEmpty(Model.Message) ? "" : "disabled")>
+                                <i class="bi bi-trash"></i> Confirm Delete
                             </button>
                         </div>
                     </form>

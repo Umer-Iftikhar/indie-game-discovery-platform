@@ -3,81 +3,80 @@
     ViewData["Title"] = "Developer Profile";
 }
 
-<div class="container mt-5">
-    <div class="row">
+<div class="profile-page-wrapper">
+    <div class="profile-grid">
         @* User Basic Info Card *@
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <h2 class="card-title">@Model.Name</h2>
-                    <p class="text-muted">@Model.Email</p>
-                    <hr />
-                    <div class="d-flex justify-content-around">
-                        <div>
+        <aside class="info-sidebar">
+            <div class="profile-card">
+                <div class="profile-card-content">
+                    <h2 class="profile-name">@Model.Name</h2>
+                    <p class="profile-email">@Model.Email</p>
+                    <hr class="divider" />
+                    <div class="stats-row">
+                        <div class="stat-item">
                             <h6>Joined</h6>
                             <p>@Model.JoinDate.ToString("MMM yyyy")</p>
                         </div>
-                        <div>
+                        <div class="stat-item">
                             <h6>Games</h6>
-                            <p class="badge bg-primary fs-6">@Model.TotalGames</p>
+                            <span class="custom-badge-primary">@Model.TotalGames</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
+
         @* GitHub Section *@
-        <div class="col-md-8">
+        <main class="content-area">
             @if (Model.GitHubProfile != null)
             {
-                <div class="card shadow-sm border-dark">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">GitHub Integration</h4>
-                        <a href="@Model.GitHubProfile.ProfileUrl" target="_blank" class="btn btn-outline-light btn-sm">
+                <section class="github-card">
+                    <header class="github-header">
+                        <h4 class="header-title">GitHub Integration</h4>
+                        <a href="@Model.GitHubProfile.ProfileUrl" target="_blank" class="outline-button">
                             View on GitHub
                         </a>
-                    </div>
-                    <div class="card-body">
-                        <div class="row text-center">
-                            @* Public Repos *@
-                            <div class="col-sm-6 border-end">
-                                <h6 class="text-muted">Public Repos</h6>
-                                <p class="h4">@Model.GitHubProfile.PublicRepos</p>
+                    </header>
+                    <div class="github-body">
+                        <div class="repo-stats-grid">
+                            <div class="repo-stat border-right">
+                                <span class="stat-label">Public Repos</span>
+                                <span class="stat-value">@Model.GitHubProfile.PublicRepos</span>
                             </div>
-                            @* Total Stars *@
-                            <div class="col-sm-6">
-                                <h6 class="text-muted">Total Stars</h6>
-                                <p class="h4 text-warning">
+                            <div class="repo-stat">
+                                <span class="stat-label">Total Stars</span>
+                                <span class="stat-value text-warning">
                                     <i class="bi bi-star-fill"></i> @Model.GitHubProfile.TotalStars
-                                </p>
+                                </span>
                             </div>
                         </div>
 
-                        <hr />
+                        <hr class="divider" />
 
-                        <h6>Top Languages</h6>
-                        <div class="d-flex flex-wrap gap-2">
+                        <h6 class="section-subtitle">Top Languages</h6>
+                        <div class="tag-cloud">
                             @if (Model.GitHubProfile?.TopLanguages != null && Model.GitHubProfile.TopLanguages.Any())
                             {
                                 @foreach (var lang in Model.GitHubProfile.TopLanguages)
                                 {
-                                    <span class="badge bg-info text-dark">@lang</span>
+                                    <span class="custom-badge-info">@lang</span>
                                 }
                             }
                             else
                             {
-                                <span class="text-muted italic">No languages detected.</span>
+                                <span class="text-muted">No languages detected.</span>
                             }
                         </div>
                     </div>
-                </div>
+                </section>
             }
             else
             {
-                <div class="alert alert-secondary border-dashed">
-                    <h5 class="alert-heading">GitHub Not Linked</h5>
-                    <p class="mb-0">This developer hasn't connected their GitHub account to IndieVault yet.</p>
+                <div class="empty-state-alert">
+                    <h5>GitHub Not Linked</h5>
+                    <p>This developer hasn't connected their GitHub account to IndieVault yet.</p>
                 </div>
             }
-        </div>
+        </main>
     </div>
 </div>
