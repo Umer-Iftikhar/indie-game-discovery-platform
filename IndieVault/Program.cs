@@ -1,4 +1,5 @@
 using IndieVault.Data;
+using IndieVault.Extensions;
 using IndieVault.Models;
 using IndieVault.Services;
 using Microsoft.AspNetCore.Identity;
@@ -35,7 +36,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
     options.Password.RequiredUniqueChars = 1;
-    options.User.AllowedUserNameCharacters = string.Empty; // Allow all characters in usernames
+    options.User.AllowedUserNameCharacters = string.Empty; 
     options.User.RequireUniqueEmail = true;
 
     // Optional: Lockout settings
@@ -48,17 +49,16 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 var app = builder.Build();
 
+app.UseGlobalExceptionMiddleware();
 
+app.UseStatusCodePagesWithRedirects("/Error/{0}");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     await DatabaseSeeder.SeedAsync(app.Services);
 }
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-}
+
 app.UseRouting();
 
 app.UseAuthentication();
