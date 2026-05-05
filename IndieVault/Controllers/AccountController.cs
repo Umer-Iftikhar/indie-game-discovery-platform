@@ -167,6 +167,7 @@ namespace IndieVault.Controllers
 
             var model = new DevProfileViewModel
             {
+                UserId = userId,
                 TotalGames = totalGames,
                 Email = user.Email,
                 Name = user.UserName,
@@ -176,6 +177,59 @@ namespace IndieVault.Controllers
             return View(model);
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> EditProfile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new EditProfileViewModel
+            {
+                GithubUserName = user.GithubUserName ?? string.Empty
+            };
+
+            return View(viewModel);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Update the domain model from the view model
+            user.GithubUserName = model.GithubUserName;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                // Redirecting to Profile page which requires userId
+                return RedirectToAction("Profile", new { userId = user.Id });
+            }
+
+            // If Identity update fails, add errors to ModelState
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(model);
+        }
 
 
     }

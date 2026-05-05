@@ -1,4 +1,5 @@
-﻿@model IndieVault.ViewModels.DevProfileViewModel
+﻿@using System.Security.Claims
+@model IndieVault.ViewModels.DevProfileViewModel
 @{
     ViewData["Title"] = "Developer Profile";
 }
@@ -6,12 +7,20 @@
 <div class="profile-page-wrapper">
     <div class="profile-grid">
         @* User Basic Info Card *@
+
         <aside class="info-sidebar">
             <div class="profile-card">
                 <div class="profile-card-content">
+                    @{
+                        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                        var isOwner = currentUserId == Model.UserId;
+                    }
+
                     <h2 class="profile-name">@Model.Name</h2>
                     <p class="profile-email">@Model.Email</p>
+            
                     <hr class="divider" />
+
                     <div class="stats-row">
                         <div class="stat-item">
                             <h6>Joined</h6>
@@ -22,8 +31,18 @@
                             <span class="custom-badge-primary">@Model.TotalGames</span>
                         </div>
                     </div>
+
+                    @if (isOwner)
+                    {
+                        <div class="edit-button-wrapper">
+                            <a asp-controller="Account" asp-action="EditProfile" class="outline-button">
+                                <i class="bi bi-person-gear"></i> Edit Profile
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
+        </aside>
         </aside>
 
         @* GitHub Section *@

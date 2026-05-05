@@ -312,7 +312,7 @@ filters-container .form-control::placeholder {
     color: #ffffff !important;
 }
 
-/* ----------- IndieVault: Game Details Refined ----------- */
+/* ----------- Game Details Refined ----------- */
 
 /* --- Layout Containers --- */
 .iv-details-sidebar,
@@ -729,6 +729,35 @@ filters-container .form-control::placeholder {
     border: 0;
     border-top: 1px solid #2d323e;
     margin: 2rem 0;
+}
+
+/* Fix the button positioning and look */
+.edit-button-wrapper {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #2d323e; /* Secondary divider for the action area */
+    display: flex;
+    justify-content: center;
+}
+
+    .edit-button-wrapper .outline-button {
+        width: 100%;
+        display: inline-block;
+        padding: 10px 20px;
+        background: #242933; /* Match the GitHub header color for consistency */
+        border-color: #3b82f6; /* Give it a primary border color */
+        color: #fff;
+    }
+
+        .edit-button-wrapper .outline-button:hover {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+/* Ensure the profile card is flexible but stays in its column */
+.profile-card {
+    height: auto;
+    min-height: 100%;
 }
 
 /* Responsive */
