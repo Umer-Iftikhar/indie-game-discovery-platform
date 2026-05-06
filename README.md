@@ -21,7 +21,7 @@ and admins can manage the platform.
 - Custom 404 and 500 error pages
 
 ## Technologies
-- ASP.NET Core 10 MVC
+- ASP.NET Core 9 MVC
 - Entity Framework Core (Code-First)
 - Dapper (read-heavy queries)
 - MySQL
@@ -43,24 +43,33 @@ and admins can manage the platform.
 ## Setup
 
 ### Prerequisites
-- .NET 10 SDK
+- .NET 9 SDK
 - MySQL Server
-- Visual Studio 2022
+- Visual Studio 2026
 
 ### Steps
 1. Clone the repository
-   git clone https://github.com/Umer-Iftikhar/aspnet-learning-journey
+   git clone:
+   ```
+   https://github.com/Umer-Iftikhar/aspnet-learning-journey
+   ```
 
-2. Restore dependencies
+2. Restore dependencies:
+   ```
    dotnet restore
+   ```
 
-3. Add connection string via user secrets
+3. Add connection string via user secrets:
+   ```
    dotnet user-secrets set "ConnectionStrings:DefaultConnection" 
-   "server=localhost;database=IndieVault;user=root;password=yourpassword"
+   "server=localhost;database=IndieVault;user=root;password=your-password"
+   ```
 
-4. Run migrations
+4. Run migrations:
    Open Package Manager Console in Visual Studio
+   ```
    Update-Database
+   ```
 
 5. Run the application
    The database will be seeded automatically on first run in Development.
