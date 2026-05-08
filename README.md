@@ -51,7 +51,7 @@ and admins can manage the platform.
 1. Clone the repository
    git clone:
    ```
-   https://github.com/Umer-Iftikhar/aspnet-learning-journey
+   https://github.com/Umer-Iftikhar/indie-vault
    ```
 
 2. Restore dependencies:
